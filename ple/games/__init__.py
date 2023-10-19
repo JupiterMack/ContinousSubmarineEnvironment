@@ -1,0 +1,1 @@
+from .contflappybird import ContFlappyBird
