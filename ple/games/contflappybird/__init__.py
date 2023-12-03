@@ -358,6 +358,11 @@ class ContFlappyBird(PyGameWrapper):
         self.player = None
         self.pipe_group = None
 
+        # New attributes for controlling pipe alignment
+        self.num_pipes_same_gap = 5  # Number of pipes to maintain the same gap
+        self.current_pipe_gap = self.pipe_min  # Initial pipe gap
+        self.pipes_generated = 0  # Counter for the number of pipes generated
+
         self.rewards = {
             "positive": 0.1,
             "negative": -0.4,
@@ -525,16 +530,17 @@ class ContFlappyBird(PyGameWrapper):
         -------
         pipe : Pipe instance
         """
-        start_gap = self.rng.randint(
-            self.pipe_min,
-            self.pipe_max
-        )
+
+        # Change the gap only after the specified number of pipes
+        if self.pipes_generated % self.num_pipes_same_gap == 0:
+            # Randomly select a new gap start
+            self.current_pipe_gap = self.rng.randint(self.pipe_min, self.pipe_max)
 
         if pipe is None:
             pipe = Pipe(
                 self.width,
                 self.height,
-                start_gap,
+                self.current_pipe_gap,
                 self.pipe_gap,
                 self.images["pipes"],
                 self.scale,
@@ -545,7 +551,9 @@ class ContFlappyBird(PyGameWrapper):
 
             return pipe
         else:
-            pipe.init(start_gap, self.pipe_gap, offset, self.pipe_color)
+            pipe.init(self.current_pipe_gap, self.pipe_gap, offset, self.pipe_color)
+        # Increment the pipe generation counter
+        self.pipes_generated += 1
 
     def _handle_player_events(self):
         """

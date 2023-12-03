@@ -63,7 +63,7 @@ class Nonstationarity():
         """
 
         #path = os.getcwd()
-        path = 'C:\\Users\\mackj\\OneDrive\\Desktop\\ThesisFB\\FlappyBird_environment_upgraded'
+        path = 'C:/Users/mackj/OneDrive/Desktop/ThesisFB/FlappyBird_environment_upgraded'
         print('Load {}/envs/{}_envs/{}_{}.txt'.format(path, self.phase, self.ns_type, self.seed))
         with open(path + '/envs/{}_envs/{}_{}.txt'.format(self.phase, self.ns_type, self.seed), 'r') as f:
             self.points_list = simplejson.load(f)
