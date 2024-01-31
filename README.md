@@ -1,4 +1,4 @@
-ContinuousFlappyBird: an experimental framework for research on RL in aDBS
+ContinuousSubmarineEnvironment: an experimental framework for research on RL in aDBS
 ================
 
 This repo contains a suite of OpenAI gym-wrapped RL environments, that have similar problem properties than the Parkinson's disease specific aDBS control problem. These environments are
@@ -12,10 +12,10 @@ See the repo FlappyBird_agents/examples for details on how to use the environmen
 
 How to for Developers
 ---------------------
-FlappyBird is adapted to have non-stationary dynamics and a noisy reward.
+FlappyBird is adapted to have non-stationary dynamics.
 
 
 Support
 ---------------
 If you are having issues, please let me know.
-Contact me at: mara.vaihinger@gmx.de
+Contact me at: mackjupiter@gmail.com
