@@ -19,6 +19,12 @@ non-stationarities change the internal gravity parameter and the action of one n
 by the other. 
 """
 
+register(
+    id='ContSubmarineGame-v0',
+    entry_point='envs.senvironment:ContSubmarineGameEnv',
+    max_episode_steps = 1000000,
+)
+
 for game in ['ContFlappyBird']:
     nondeterministic = False
     register(

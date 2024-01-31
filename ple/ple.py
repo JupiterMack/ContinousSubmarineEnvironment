@@ -5,6 +5,9 @@ import pygame
 from PIL import Image  # pillow
 
 from .games.base.pygamewrapper import PyGameWrapper
+import gym.spaces as gspc
+sys.path.append("FlappyBird_agents_upgraded")
+sys.path.append("FlappyBird_environment_upgraded")
 
 
 class PLE(object):
@@ -107,6 +110,7 @@ class PLE(object):
 
         self.last_action = []
         self.action = []
+        
         self.previous_score = 0
         self.frame_count = 0
 
@@ -357,24 +361,8 @@ class PLE(object):
                 "Was asked to return state vector for game that does not support it!")
 
     def act(self, action):
-        """
-        Perform an action on the game. We lockstep frames with actions. If act is not called the game will not run.
-
-        Parameters
-        ----------
-
-        action : int
-            The index of the action we wish to perform. The index usually corresponds to the index item returned by getActionSet().
-
-        Returns
-        -------
-
-        int
-            Returns the reward that the agent has accumlated while performing the action.
-
-        """
         return sum(self._oneStepAct(action) for i in range(self.frame_skip))
-
+    
     def _draw_frame(self):
         """
         Decides if the screen will be drawn too
@@ -389,13 +377,18 @@ class PLE(object):
         if self.game_over():
             return 0.0
 
-        if action not in self.getActionSet():
+        # Replace None action with NOOP
+        if action is None:
             action = self.NOOP
+            print("Replacing None action with NOOP")
+
+        #if action not in self.getActionSet():
+        #    action = self.NOOP
 
         self._setAction(action)
         for i in range(self.num_steps):
             time_elapsed = self._tick()
-            self.game.step(time_elapsed)
+            self.game.step(time_elapsed, action)
             self._draw_frame()
 
         self.frame_count += self.num_steps
@@ -404,12 +397,16 @@ class PLE(object):
 
     def _setAction(self, action):
         """
-            Instructs the game to perform an action if its not a NOOP
+        Sets the action for the game.
         """
 
-        if action is not None:
-            self.game._setAction(action, self.last_action)
+        # Replace None action with NOOP
+        if action is None:
+            action = self.NOOP
+            print("Replacing None action with NOOP in _setAction")
 
+        # Directly set the action in the game, ensuring it's not None
+        self.game._setAction(action, self.last_action)
         self.last_action = action
 
     def _getReward(self):

@@ -17,18 +17,16 @@ MAX_WASHOUT = 300
 NUM_FEAT = 7
 
 def process_state(state):
-    """
-    Process the state provided by ContFlappyBird
+    # Ensure that the state is a dictionary and all values can be converted to a float
+    if isinstance(state, dict):
+        try:
+            processed_state = np.array([float(value) for value in state.values()])
+        except ValueError:
+            raise ValueError("Non-numeric state values encountered in state dictionary.")
+    else:
+        raise TypeError("State is expected to be a dictionary.")
 
-    Parameters
-    ----------
-    state : dict
-
-    Returns
-    -------
-    numpy array
-    """
-    return np.array(list(state.values()))
+    return processed_state
 
 
 class PLEEnv_state(gym.Env):
@@ -73,7 +71,7 @@ class PLEEnv_state(gym.Env):
 
         # get the action and state set of the game
         self._action_set = self.game_state.getActionSet()
-        self.action_space = gspc.Discrete(len(self._action_set))
+        self.action_space = gspc.Discrete(3)  # 0 for descent, 1 for ascent
         self.screen_height, self.screen_width = self.game_state.getScreenDims()
         if game_name == 'FlappyBird':
             self.observation_space = gspc.Box(low=-np.inf, high=np.inf, shape=(8+nrandfeatures,), dtype=np.float32)
@@ -87,6 +85,7 @@ class PLEEnv_state(gym.Env):
         self.noflap_cnt = 0
         self.flap_cnt = 1
         self.decayed_thrust = 9  # initial thust parameter
+        
 
         # which NS to apply
         self.nonstationary = nonstationary
@@ -99,35 +98,22 @@ class PLEEnv_state(gym.Env):
         self.noise = noise_level
         self.noise_gen = self.generate_noise_sources(noise_level)  # initialize noise generator
 
-        def step(a):
-            """
+    def step(self, action):
+        """
+        Perform a step with a continuous action.
 
-            Parameters
-            ----------
-            a : int {0, 1}
+        Parameters
+        ----------
+        action : float
+            Continuous action value representing flap power.
+        """
+        # Pass continuous action directly to the game's act method
+        reward = self.game_state.act(action)  # Pass the action to act method
+        state = self.game_state.getGameState()
+        terminal = self.game_state.game_over()
 
-            Returns
-            -------
-            state : numpy array
-                The game state.
-            reward : float
-                The reward achieved by taking a in the current state
-            terminal : bool
-                Is it a terminal state?
-            """
+        return state, reward, terminal, {}
 
-            if self.hNS:
-                a = self.decay_thrust(a)
-            reward = self.game_state.act(self._action_set[a])
-            state = self.get_state()
-            state = self.add_noise(state, self.noise)
-            terminal = self.game_state.game_over()
-            if self.nonstationary is not None:
-                self.update_param(self.param_traj.get_next_value())
-
-            return state, reward, terminal, {}
-
-        self.step = step
 
     def _get_image(self):
         """

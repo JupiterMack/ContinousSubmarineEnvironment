@@ -14,7 +14,16 @@ PIPE_GAP = 90
 
 
 def process_state(state):
-    return np.array(list(state.values()))  # np.array([ .... ])
+    # Ensure that the state is a dictionary and all values can be converted to a float
+    if isinstance(state, dict):
+        try:
+            processed_state = np.array([float(value) for value in state.values()])
+        except ValueError:
+            raise ValueError("Non-numeric state values encountered in state dictionary.")
+    else:
+        raise TypeError("State is expected to be a dictionary.")
+
+    return processed_state
 
 
 class PLEEnv_state(gym.Env):
@@ -32,7 +41,7 @@ class PLEEnv_state(gym.Env):
         self.game_state = PLE(self.game, fps=30, display_screen=display_screen, state_preprocessor=process_state)
         self.game_state.init()
         self._action_set = self.game_state.getActionSet()
-        self.action_space = gspc.Discrete(len(self._action_set))
+        self.action_space = gspc.Discrete(3)  # 0 for descent, 1 for ascent, 2 for maintain altitude
         self.screen_height, self.screen_width = self.game_state.getScreenDims()
         if game_name == 'FlappyBird':
             self.observation_space = gspc.Box(low=-np.inf, high=np.inf, shape=(8,), dtype=np.float32)
@@ -54,12 +63,16 @@ class PLEEnv_state(gym.Env):
         self.nrandfeat = nrandfeatures
 
         def step(a):
-            if self.hNS:
-                # a = decay(a)  # TODO implement function, that recursively computes the the resulting flap power. (0-1)
-                pass  # TODO: pass real value to act function --> it is then treated in environment
+            """
+            Perform a step 
+
+            Parameters
+            ----------
+            action : float
+                discrete action 0 or 1
+            """
             reward = self.game_state.act(self._action_set[a])
             state = self.game_state.getGameState()
-            # TODO extend state by random uninformative feature(s), do that in all other step functions
             terminal = self.game_state.game_over()
             return state, reward, terminal, {}
 
