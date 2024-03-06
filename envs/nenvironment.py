@@ -2,8 +2,8 @@ import os, sys
 import gym
 import gym.spaces as gspc
 import numpy as np
-sys.path.append("FlappyBird_agents_upgraded")
-sys.path.append("FlappyBird_environment_upgraded")
+sys.path.append("ContinuousSubmarine_agents")
+sys.path.append("ContinuousSubmarineEnvironment")
 from ple.ple import PLE
 from envs.random_trajectories import Nonstationarity
 

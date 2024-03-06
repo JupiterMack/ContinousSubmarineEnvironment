@@ -3,8 +3,8 @@ import sys
 import os
 import matplotlib.pyplot as plt
 import simplejson
-sys.path.append("FlappyBird_agents_upgraded")
-sys.path.append("FlappyBird_environment_upgraded")
+sys.path.append("ContinuousSubmarine_agents")
+sys.path.append("ContinuousSubmarineEnvironment")
 PLOTTING = True
 
 class Nonstationarity():

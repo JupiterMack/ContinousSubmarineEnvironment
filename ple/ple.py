@@ -6,8 +6,8 @@ from PIL import Image  # pillow
 
 from .games.base.pygamewrapper import PyGameWrapper
 import gym.spaces as gspc
-sys.path.append("FlappyBird_agents_upgraded")
-sys.path.append("FlappyBird_environment_upgraded")
+sys.path.append("ContinuousSubmarine_agents")
+sys.path.append("ContinuousSubmarineEnvironment")
 
 
 class PLE(object):

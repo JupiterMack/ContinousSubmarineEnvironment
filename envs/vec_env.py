@@ -1,8 +1,8 @@
 import numpy as np
 import sys
 from multiprocessing import Process, Pipe
-sys.path.append("FlappyBird_agents_upgraded")
-sys.path.append("FlappyBird_environment_upgraded")
+sys.path.append("ContinuousSubmarine_agents")
+sys.path.append("ContinuousSubmarineEnvironment")
 from abc import ABC, abstractmethod
 # import logger
 
